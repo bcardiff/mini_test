@@ -14,5 +14,7 @@ void absolute_of_negatives() {
 int main() {
   RUN_TEST(absolute_of_positives);
   RUN_TEST(absolute_of_negatives);
+
+  return 0;
 }
 

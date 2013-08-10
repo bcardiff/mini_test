@@ -49,13 +49,7 @@ void mt_make_error(T lhs, T rhs, string loc) {
   throw os.str().c_str();
 }
 
-void mt_make_missing_exception_error(string loc) {
-  ostringstream os;
-  os << "  at " << loc << endl;
-  os << "    an exception was expected" << endl;
-  os << "    no exception was thrown";
-  throw os.str().c_str();
-}
+void mt_make_missing_exception_error(string loc);
 
 template<typename T>
 void mt_make_wrong_type_exception_error(T e, const char* expected, string loc) {
@@ -67,24 +61,20 @@ void mt_make_wrong_type_exception_error(T e, const char* expected, string loc) {
   throw os.str().c_str();
 }
 
-string mt_location(const char* file, int line) {
-  ostringstream os;
-  os << file << ":" << line;
-  return os.str().c_str();
-}
+string mt_location(const char* file, int line);
+string mt_bool_to_s(bool b);
 
-string mt_bool_to_s(bool b) { return b ? "true" : "false"; }
+void mt_assert(bool lhs, bool rhs, string loc);
+void mt_assert(int lhs, int rhs, string loc);
+void mt_assert(string lhs, string rhs, string loc);
+void mt_assert(const char* lhs, const char* rhs, string loc);
 
-void mt_assert(bool lhs, bool rhs, string loc) { if (lhs != rhs) { mt_make_error(mt_bool_to_s(lhs), mt_bool_to_s(rhs), loc); } }
-void mt_assert(int lhs, int rhs, string loc) { if (lhs != rhs) { mt_make_error(lhs, rhs, loc); } }
-void mt_assert(string lhs, string rhs, string loc) { if (lhs.compare(rhs) != 0) { mt_make_error(lhs, rhs, loc); } }
-void mt_assert(const char* lhs, const char* rhs, string loc) { mt_assert(string(lhs), string(rhs), loc); }
 #define RUN_TEST(test) {\
   {bool ok = true;\
   cout << #test << "..." << flush;\
   try { test(); }\
-  catch (const char* msg) { ok = false; cout << "error" << endl << msg; } \
-  catch (...) { ok = false; cout << "error"; }\
+  catch (const char* msg) { ok = false; cout << "failed" << endl << msg; } \
+  catch (...) { ok = false; cout << "failed"; }\
   if (ok) { cout << "ok"; }\
   cout << endl << flush;\
   }\

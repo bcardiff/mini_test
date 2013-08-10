@@ -29,4 +29,6 @@ int main() {
   RUN_TEST(test_string);
   RUN_TEST(test_string_literal);
   RUN_TEST(test_string_and_literal);
+
+  return 0;
 }
