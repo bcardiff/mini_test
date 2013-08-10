@@ -46,13 +46,31 @@ void mt_make_error(T lhs, T rhs, string loc) {
   os << "  at " << loc << endl;
   os << "    expected value: " << rhs << endl;
   os << "      actual value: " << lhs;
-  throw os.str();
+  throw os.str().c_str();
+}
+
+void mt_make_missing_exception_error(string loc) {
+  ostringstream os;
+  os << "  at " << loc << endl;
+  os << "    an exception was expected" << endl;
+  os << "    no exception was thrown";
+  throw os.str().c_str();
+}
+
+template<typename T>
+void mt_make_wrong_type_exception_error(T e, const char* expected, string loc) {
+  ostringstream os;
+  os << "  at " << loc << endl;
+  os << "    an unexpected exception ocurred" << endl;
+  os << "    expected type: " << expected << endl;
+  os << "    but got: " << e;
+  throw os.str().c_str();
 }
 
 string mt_location(const char* file, int line) {
   ostringstream os;
   os << file << ":" << line;
-  return os.str();
+  return os.str().c_str();
 }
 
 string mt_bool_to_s(bool b) { return b ? "true" : "false"; }
@@ -65,7 +83,7 @@ void mt_assert(const char* lhs, const char* rhs, string loc) { mt_assert(string(
   {bool ok = true;\
   cout << #test << "..." << flush;\
   try { test(); }\
-  catch (string& msg) { ok = false; cout << "error" << endl << msg; } \
+  catch (const char* msg) { ok = false; cout << "error" << endl << msg; } \
   catch (...) { ok = false; cout << "error"; }\
   if (ok) { cout << "ok"; }\
   cout << endl << flush;\
@@ -74,4 +92,23 @@ void mt_assert(const char* lhs, const char* rhs, string loc) { mt_assert(string(
 #define ASSERT_EQ(lhs, rhs) { mt_assert((lhs), (rhs), mt_location(__FILE__, __LINE__)); }
 #define ASSERT(expr) { mt_assert((expr), true, mt_location(__FILE__, __LINE__)); }
 
+#define ASSERT_RAISE(code) {\
+  {bool mt_thrown = false;\
+  try { code; }\
+  catch (...) { mt_thrown = true; }\
+  if (!mt_thrown) { mt_make_missing_exception_error(mt_location(__FILE__, __LINE__)); }\
+  }\
+}
+
+// catch (const char* msg) { mt_make_wrong_type_exception_error(msg, #e_type, mt_location(__FILE__, __LINE__)); }
+
+#define ASSERT_RAISE_A(e_type, code) {\
+  {bool mt_thrown = false;\
+  try { code; }\
+  catch (e_type mt_e) { mt_thrown = true; }\
+  catch (const std::exception &e) { mt_make_wrong_type_exception_error(e.what(), #e_type, mt_location(__FILE__, __LINE__)); }\
+  catch (...) { mt_make_wrong_type_exception_error("<unkown type>", #e_type, mt_location(__FILE__, __LINE__)); }\
+  if (!mt_thrown) { mt_make_missing_exception_error(mt_location(__FILE__, __LINE__)); }\
+  }\
+}
 #endif

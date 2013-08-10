@@ -1,4 +1,4 @@
 mini_test
 =========
 
-Mini test framework para C++
+Mini test framework for C++

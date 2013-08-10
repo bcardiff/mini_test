@@ -1,2 +1,4 @@
-samples/maths/*.o
-samples/maths/tests
+samples/**/*.o
+samples/**/tests
+tests/*.o
+tests/tests
