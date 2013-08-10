@@ -1,47 +1,15 @@
 #ifndef MINI_TEST
 #define MINI_TEST
 
-/*
-
-Mini Test for C++
-author: Brian J. Cardiff
-
-1. include mini_test.h
-
-   #include "mini_test.h"
-
-2. Create simple test cases.
-
-    void testName() {
-      // test code
-    }
-
-3. Use ASSERT(<bool>) or ASSERT_EQ(<T>, <T>) where T = bool, int, string.
-
-    void testName() {
-      int m = max(3, 7);
-      ASSERT_EQ(m, 7);
-    }
-
-4. Create a main entry point that list the test cases to be executed.
-
-    int main() {
-      RUN_TEST(testName);
-      RUN_TEST(testName2);
-      RUN_TEST(testName3);
-      // etc.
-    }
-
-5. Compile & run.
-
-*/
-
 #include <iostream>
 #include <sstream>
+
+namespace mt {
+
 using namespace std;
 
 template<class T>
-void mt_make_error(T lhs, T rhs, string loc) {
+void make_error(T lhs, T rhs, string loc) {
   ostringstream os;
   os << "  at " << loc << endl;
   os << "    expected value: " << rhs << endl;
@@ -49,10 +17,10 @@ void mt_make_error(T lhs, T rhs, string loc) {
   throw os.str().c_str();
 }
 
-void mt_make_missing_exception_error(string loc);
+void make_missing_exception_error(string loc);
 
 template<typename T>
-void mt_make_wrong_type_exception_error(T e, const char* expected, string loc) {
+void make_wrong_type_exception_error(T e, const char* expected, string loc) {
   ostringstream os;
   os << "  at " << loc << endl;
   os << "    an unexpected exception ocurred" << endl;
@@ -61,44 +29,46 @@ void mt_make_wrong_type_exception_error(T e, const char* expected, string loc) {
   throw os.str().c_str();
 }
 
-string mt_location(const char* file, int line);
-string mt_bool_to_s(bool b);
+string location(const char* file, int line);
+string bool_to_s(bool b);
 
-void mt_assert(bool lhs, bool rhs, string loc);
-void mt_assert(int lhs, int rhs, string loc);
-void mt_assert(string lhs, string rhs, string loc);
-void mt_assert(const char* lhs, const char* rhs, string loc);
+void assert_eq(bool lhs, bool rhs, string loc);
+void assert_eq(int lhs, int rhs, string loc);
+void assert_eq(string lhs, string rhs, string loc);
+void assert_eq(const char* lhs, const char* rhs, string loc);
+
+}
 
 #define RUN_TEST(test) {\
-  {bool ok = true;\
-  cout << #test << "..." << flush;\
+  {bool mt_ok = true;\
+  std::cout << #test << "..." << std::flush;\
   try { test(); }\
-  catch (const char* msg) { ok = false; cout << "failed" << endl << msg; } \
-  catch (...) { ok = false; cout << "failed"; }\
-  if (ok) { cout << "ok"; }\
-  cout << endl << flush;\
+  catch (const char* msg) { mt_ok = false; std::cout << "failed" << std::endl << msg; } \
+  catch (...) { mt_ok = false; std::cout << "failed"; }\
+  if (mt_ok) { std::cout << "ok"; }\
+  std::cout << std::endl << std::flush;\
   }\
 }
-#define ASSERT_EQ(lhs, rhs) { mt_assert((lhs), (rhs), mt_location(__FILE__, __LINE__)); }
-#define ASSERT(expr) { mt_assert((expr), true, mt_location(__FILE__, __LINE__)); }
+#define ASSERT_EQ(lhs, rhs) { mt::assert_eq((lhs), (rhs), mt::location(__FILE__, __LINE__)); }
+#define ASSERT(expr) { mt::assert_eq((expr), true, mt::location(__FILE__, __LINE__)); }
 
 #define ASSERT_RAISE(code) {\
   {bool mt_thrown = false;\
   try { code; }\
   catch (...) { mt_thrown = true; }\
-  if (!mt_thrown) { mt_make_missing_exception_error(mt_location(__FILE__, __LINE__)); }\
+  if (!mt_thrown) { mt::make_missing_exception_error(mt::location(__FILE__, __LINE__)); }\
   }\
 }
 
-// catch (const char* msg) { mt_make_wrong_type_exception_error(msg, #e_type, mt_location(__FILE__, __LINE__)); }
+// catch (const char* msg) { mt::make_wrong_type_exception_error(msg, #e_type, mt_location(__FILE__, __LINE__)); }
 
 #define ASSERT_RAISE_A(e_type, code) {\
   {bool mt_thrown = false;\
   try { code; }\
   catch (e_type mt_e) { mt_thrown = true; }\
-  catch (const std::exception &e) { mt_make_wrong_type_exception_error(e.what(), #e_type, mt_location(__FILE__, __LINE__)); }\
-  catch (...) { mt_make_wrong_type_exception_error("<unkown type>", #e_type, mt_location(__FILE__, __LINE__)); }\
-  if (!mt_thrown) { mt_make_missing_exception_error(mt_location(__FILE__, __LINE__)); }\
+  catch (const std::exception &e) { mt::make_wrong_type_exception_error(e.what(), #e_type, mt::location(__FILE__, __LINE__)); }\
+  catch (...) { mt::make_wrong_type_exception_error("<unkown type>", #e_type, mt::location(__FILE__, __LINE__)); }\
+  if (!mt_thrown) { mt::make_missing_exception_error(mt::location(__FILE__, __LINE__)); }\
   }\
 }
 #endif

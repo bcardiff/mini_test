@@ -1,5 +1,7 @@
 #include "mini_test.h"
 
+using namespace std;
+
 void test_bool() {
   ASSERT_EQ(true, false);
 }
