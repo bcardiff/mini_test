@@ -10,14 +10,14 @@ mini_test is a minimalist framework for testing C++ code.
 
 ## Usage
 
-Supose you want to test a `int max(int, int);` function defined in `your_lib.h`/`your_lib.cpp`. 
+Suppose you want to test a `int max(int, int);` function defined in `your_lib.h`/`your_lib.cpp`.
 
 
 1. Create `tests.cpp`. Include `your_lib.h` and `mini_test.h`
 
 	```
 	// file: tests.cpp
-		
+
 	#include "mini_test.h"
 	#include "your_lib.h"
 	```
@@ -28,7 +28,7 @@ Supose you want to test a `int max(int, int);` function defined in `your_lib.h`/
 	// file: tests.cpp
 	#include "mini_test.h"
 	#include "your_lib.h"
-	
+
     void max_between_positives() {
       int m = max(3, 7);
       ASSERT_EQ(m, 7);
@@ -47,12 +47,13 @@ Supose you want to test a `int max(int, int);` function defined in `your_lib.h`/
 	#include "mini_test.h"
 	#include "your_lib.h"
 
-    void max_between_positives() { ... } 
+    void max_between_positives() { ... }
+    void max_between_negatives() { ... }
 
     int main() {
       RUN_TEST(max_between_positives);
       RUN_TEST(max_between_negatives);
-      
+
 	  return 0;
     }
     ```
@@ -60,15 +61,15 @@ Supose you want to test a `int max(int, int);` function defined in `your_lib.h`/
 1. Compile & run. You should see:
 
 	```
-	$ ./tests 
+	$ ./tests
 	max_between_positives...ok
 	max_between_negatives...ok
 	```
-	
-	or, if mistake `>` with `<`:
-	
+
+	or, if you mistook `>` with `<`:
+
 	```
-	$ ./tests 
+	$ ./tests
 	max_between_positives...failed
 	  at tests.cpp:6
 	    expected value: 7
