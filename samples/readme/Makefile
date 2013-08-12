@@ -1,6 +1,6 @@
 CXXFLAGS =	-O2 -g -Wall -fmessage-length=0 -I../../src
 
-SOURCES = your_lib.cpp tests.cpp ../../src/mini_test.cpp
+SOURCES = your_lib.cpp tests.cpp
 OBJS = $(SOURCES:.cpp=.o)
 
 LIBS =

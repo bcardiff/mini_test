@@ -5,8 +5,10 @@ mini_test is a minimalist framework for testing C++ code.
 
 ## Installation
 
-1. Copy `./src/mini_test.h` and `./src/mini_test.cpp` to your C++ project.
-2. Add required steps to compile `mini_test.cpp` together with the rest of your source files.
+1. Copy [`./src/mini_test.h`](https://raw.github.com/bcardiff/mini_test/master/src/mini_test.h) to your C++ project.
+2. Add reference to `mini_test.h` in your test file.
+
+mini_test is a single header library.
 
 ## Usage
 
