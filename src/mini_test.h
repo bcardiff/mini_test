@@ -3,18 +3,43 @@
 
 #include <iostream>
 #include <sstream>
+#include <exception>
 
 namespace mt {
 
 using namespace std;
 
 template<class T>
+class ValueExpectationException : public std::exception {
+public:
+  ValueExpectationException() {}
+
+  ValueExpectationException(T actual, T expected, string loc) :
+    _actual(actual), _expected(expected), _location(loc) { }
+
+  virtual ~ValueExpectationException() throw() { }
+
+  virtual const char* what() const throw() {
+    ostringstream os;
+    os << "  at " << _location << endl;
+    os << "    expected value: " << _expected << endl;
+    os << "      actual value: " << _actual;
+    return os.str().c_str();
+  }
+
+  T actual() { return _actual; }
+  T expected() { return _expected; }
+  string location() { return _location; }
+
+private:
+  T _actual;
+  T _expected;
+  string _location;
+};
+
+template<class T>
 void make_error(T lhs, T rhs, string loc) {
-  ostringstream os;
-  os << "  at " << loc << endl;
-  os << "    expected value: " << rhs << endl;
-  os << "      actual value: " << lhs;
-  throw os.str().c_str();
+  throw ValueExpectationException<T>(lhs, rhs, loc);
 }
 
 void make_missing_exception_error(string loc);
@@ -43,6 +68,7 @@ void assert_eq(const char* lhs, const char* rhs, string loc);
   {bool mt_ok = true;\
   std::cout << #test << "..." << std::flush;\
   try { test(); }\
+  catch (std::exception& e) { mt_ok = false; std::cout << "failed" << std::endl << e.what(); } \
   catch (const char* msg) { mt_ok = false; std::cout << "failed" << std::endl << msg; } \
   catch (...) { mt_ok = false; std::cout << "failed"; }\
   if (mt_ok) { std::cout << "ok"; }\
