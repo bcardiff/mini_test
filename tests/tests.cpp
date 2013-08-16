@@ -14,14 +14,16 @@ void assert_raise_should_raise_if_a_missing_exception_was_expected() {
 }
 
 void assert_raise_of_should_not_raise_if_the_exception_was_expected() {
-  ASSERT_RAISE_A(const char *, {
+  const char *e;
+  ASSERT_RAISE_A(const char *, e, {
     throw "should be catched by ASSERT_RAISE";
   });
 }
 
 void assert_raise_of_should_raise_if_the_exception_was_of_wrong_type() {
+  const char *e;
   ASSERT_RAISE({
-    ASSERT_RAISE_A(const char *, {
+    ASSERT_RAISE_A(const char *, e, {
       throw 1;
     });
   });

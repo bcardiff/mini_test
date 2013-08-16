@@ -62,10 +62,10 @@ void assert_eq(const char* lhs, const char* rhs, string loc);
 
 // catch (const char* msg) { mt::make_wrong_type_exception_error(msg, #e_type, mt_location(__FILE__, __LINE__)); }
 
-#define ASSERT_RAISE_A(e_type, code) {\
+#define ASSERT_RAISE_A(e_type, var, code) {\
   {bool mt_thrown = false;\
   try { code; }\
-  catch (e_type mt_e) { mt_thrown = true; }\
+  catch (e_type mt_e) { mt_thrown = true; var = mt_e; }\
   catch (const std::exception &e) { mt::make_wrong_type_exception_error(e.what(), #e_type, mt::location(__FILE__, __LINE__)); }\
   catch (...) { mt::make_wrong_type_exception_error("<unkown type>", #e_type, mt::location(__FILE__, __LINE__)); }\
   if (!mt_thrown) { mt::make_missing_exception_error(mt::location(__FILE__, __LINE__)); }\
