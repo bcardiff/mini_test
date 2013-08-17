@@ -105,6 +105,20 @@ void assert_eq_with_doubles() {
   ASSERT_EQ(42.0, 42.0);
 }
 
+void assert_eq_with_floats() {
+  ValueExpectationException<float> e;
+  string l;
+  ASSERT_RAISE_A(ValueExpectationException<float>, e, {
+    l = BKMK; ASSERT_EQ(1.1f, 2.0f);
+  });
+
+  ASSERT_EQ(e.actual(), 1.1f);
+  ASSERT_EQ(e.expected(), 2.0f);
+  ASSERT_EQ(e.location(), l);
+
+  ASSERT_EQ(42.0f, 42.0f);
+}
+
 int main() {
   RUN_TEST(assert_raise_should_not_raise_if_the_exception_was_expected);
   RUN_TEST(assert_raise_should_raise_if_a_missing_exception_was_expected);
@@ -119,6 +133,7 @@ int main() {
   RUN_TEST(assert_eq_with_char_ptr);
   RUN_TEST(assert_eq_with_strings_and_char_ptr);
   RUN_TEST(assert_eq_with_doubles);
+  RUN_TEST(assert_eq_with_floats);
 
   return 0;
 }

@@ -64,6 +64,7 @@ void assert_eq(T lhs, T rhs, string loc) { if (!(lhs == rhs)) { make_error(lhs, 
 void assert_eq(bool lhs, bool rhs, string loc);
 SUPPORT_ASSERT_EQ_ON(int)
 SUPPORT_ASSERT_EQ_ON(double)
+SUPPORT_ASSERT_EQ_ON(float)
 void assert_eq(string lhs, string rhs, string loc);
 void assert_eq(const char* lhs, const char* rhs, string loc);
 
