@@ -102,19 +102,24 @@ void make_wrong_type_exception_error(T e, const char* expected, string loc) {
   throw WrongExceptionExpectationException(e, expected, loc);
 }
 
-string location(const char* file, int line);
-string bool_to_s(bool b);
+string location(const char* file, int line) {
+  ostringstream os;
+  os << file << ":" << line;
+  return os.str().c_str();
+}
+
+string bool_to_s(bool b) { return b ? "true" : "false"; }
 
 #define SUPPORT_ASSERT_EQ_ON(T) \
 void assert_eq(T lhs, T rhs, string loc) { if (!(lhs == rhs)) { make_error(lhs, rhs, loc); } }\
 
 
-void assert_eq(bool lhs, bool rhs, string loc);
 SUPPORT_ASSERT_EQ_ON(int)
 SUPPORT_ASSERT_EQ_ON(double)
 SUPPORT_ASSERT_EQ_ON(float)
-void assert_eq(string lhs, string rhs, string loc);
-void assert_eq(const char* lhs, const char* rhs, string loc);
+void assert_eq(bool lhs, bool rhs, string loc) { if (lhs != rhs) { make_error(bool_to_s(lhs), bool_to_s(rhs), loc); } }
+void assert_eq(string lhs, string rhs, string loc) { if (lhs.compare(rhs) != 0) { make_error(lhs, rhs, loc); } }
+void assert_eq(const char* lhs, const char* rhs, string loc) { assert_eq(string(lhs), string(rhs), loc); }
 
 }
 
@@ -149,25 +154,5 @@ void assert_eq(const char* lhs, const char* rhs, string loc);
   if (!mt_thrown) { mt::make_missing_exception_error(mt::location(__FILE__, __LINE__)); }\
   }\
 }
-
-
-namespace mt {
-
-using namespace std;
-
-void assert_eq(bool lhs, bool rhs, string loc) { if (lhs != rhs) { make_error(bool_to_s(lhs), bool_to_s(rhs), loc); } }
-void assert_eq(string lhs, string rhs, string loc) { if (lhs.compare(rhs) != 0) { make_error(lhs, rhs, loc); } }
-void assert_eq(const char* lhs, const char* rhs, string loc) { assert_eq(string(lhs), string(rhs), loc); }
-
-string location(const char* file, int line) {
-  ostringstream os;
-  os << file << ":" << line;
-  return os.str().c_str();
-}
-
-string bool_to_s(bool b) { return b ? "true" : "false"; }
-
-}
-
 
 #endif
