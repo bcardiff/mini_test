@@ -1,4 +1,5 @@
 #include "mini_test.h"
+#include <stdexcept>
 
 #define BKMK location(__FILE__, __LINE__)
 
@@ -17,20 +18,47 @@ void assert_raise_should_raise_if_a_missing_exception_was_expected() {
   });
 }
 
-void assert_raise_of_should_not_raise_if_the_exception_was_expected() {
+void assert_raise_should_raise_a_missing_exception_expectation_exception_if_a_missing_exception_was_expected() {
+  MissingExceptionExpectationException e;
+  string l;
+  ASSERT_RAISE_A(MissingExceptionExpectationException, e, {
+    l=BKMK;ASSERT_RAISE({});
+  });
+
+  ASSERT_EQ(e.location(), l);
+}
+
+void assert_raise_a_should_not_raise_if_the_exception_was_expected() {
   const char *e;
   ASSERT_RAISE_A(const char *, e, {
     throw "should be catched by ASSERT_RAISE";
   });
 }
 
-void assert_raise_of_should_raise_if_the_exception_was_of_wrong_type() {
-  const char *e;
-  ASSERT_RAISE({
-    ASSERT_RAISE_A(const char *, e, {
-      throw 1;
-    });
+void assert_raise_a_should_raise_if_the_exception_was_of_wrong_type() {
+  WrongExceptionExpectationException e;
+  string l;
+  const char *inner;
+  ASSERT_RAISE_A(WrongExceptionExpectationException, e, {
+    l = BKMK; ASSERT_RAISE_A(const char *, inner, {throw 1;});
   });
+
+  ASSERT_EQ(e.location(), l);
+  ASSERT_EQ(e.expected(), "const char *");
+  ASSERT_EQ(e.actual(), "<unkown type>");
+}
+
+void assert_raise_a_should_raise_if_the_exception_was_of_wrong_type_with_inner_exception() {
+  WrongExceptionExpectationException e;
+  string l;
+  const char *inner;
+  ASSERT_RAISE_A(WrongExceptionExpectationException, e, {
+    l = BKMK; ASSERT_RAISE_A(const char *, inner, {throw logic_error("foo bar");});
+  });
+
+  ASSERT_EQ(e.location(), l);
+  ASSERT_EQ(e.expected(), "const char *");
+  ASSERT_EQ(e.actual(), "foo bar");
 }
 
 void assert_eq_fails_with_values_and_location() {
@@ -122,9 +150,11 @@ void assert_eq_with_floats() {
 int main() {
   RUN_TEST(assert_raise_should_not_raise_if_the_exception_was_expected);
   RUN_TEST(assert_raise_should_raise_if_a_missing_exception_was_expected);
+  RUN_TEST(assert_raise_should_raise_a_missing_exception_expectation_exception_if_a_missing_exception_was_expected);
 
-  RUN_TEST(assert_raise_of_should_not_raise_if_the_exception_was_expected);
-  RUN_TEST(assert_raise_of_should_raise_if_the_exception_was_of_wrong_type);
+  RUN_TEST(assert_raise_a_should_not_raise_if_the_exception_was_expected);
+  RUN_TEST(assert_raise_a_should_raise_if_the_exception_was_of_wrong_type);
+  RUN_TEST(assert_raise_a_should_raise_if_the_exception_was_of_wrong_type_with_inner_exception);
 
   RUN_TEST(assert_eq_fails_with_values_and_location);
   RUN_TEST(assert_eq_succed_if_values_match);
