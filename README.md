@@ -2,6 +2,16 @@
 
 mini_test is a minimalist framework for testing C++ code.
 
+Many C++ testing frameworks requires skills that are not found from the beginning. 
+
+## Features
+
+* Easy to install & use: download & copy [`./src/mini_test.h`](https://raw.github.com/bcardiff/mini_test/master/src/mini_test.h).
+* Allow programmers to create plain `void` test case functions.
+* Allow programmers to write assertions for expected values.
+* Allow programmers to Write a plain `main()` with the list of test functions to run.
+* Report success or failure per test function.
+
 
 ## Installation
 
